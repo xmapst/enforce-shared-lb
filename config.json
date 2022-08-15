@@ -1,0 +1,42 @@
+{
+  "debug": true,
+  "addr": "0.0.0.0",
+  "port": 8080,
+  "channel_size": 409600,
+  "redis": "redis://:123456@localhost:6379/0?pool_size=512&read_timeout=30s&write_timeout=30s",
+  "key_prefix": "enforce_shared_lb",
+  "labels": {
+    "lb_address_type":"internet",
+    "shared_lb":"shared-service"
+  },
+  "cloud": {
+    "name": "fake",
+    "max": 51,
+    "endpoint": "slb.aliyuncs.com",
+    "access_key_id": "",
+    "access_key_secret": "",
+    "config": {
+      "RegionId": "cn-hangzhou",
+      "AddressType": "internet",
+      "InternetChargeType": "paybytraffic",
+      "Bandwidth": 10,
+      "LoadBalancerName": "lb-bp1o94dp5i6ea****",
+      "VpcId": "vpc-bp1aevy8sofi8mh1****",
+      "VSwitchId": "vsw-bp12mw1f8k3jgy****",
+      "MasterZoneId": "cn-hangzhou-b",
+      "SlaveZoneId": "cn-hangzhou-d",
+      "LoadBalancerSpec": "slb.s1.small",
+      "ResourceGroupId": "rg-atstuj3rtopt****",
+      "PayType": "PayOnDemand",
+      "PricingCycle": "month",
+      "Duration": 1,
+      "AutoPay": true,
+      "AddressIPVersion": "ipv4",
+      "Address": "192.168.XX.XX",
+      "DeleteProtection": "on",
+      "ModificationProtectionStatus": "ConsoleProtection",
+      "ModificationProtectionReason": "Managed instance",
+      "InstanceChargeType": "PayBySpec"
+    }
+  }
+}
