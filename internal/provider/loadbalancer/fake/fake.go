@@ -2,9 +2,8 @@ package fake
 
 import (
 	"enforce-shared-lb/internal/provider"
-	"time"
-
 	"github.com/google/uuid"
+	"time"
 )
 
 type fake struct{}

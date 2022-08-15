@@ -2,10 +2,9 @@ package config
 
 import (
 	"encoding/json"
-	"os"
-
 	"github.com/sirupsen/logrus"
 	"gopkg.in/alecthomas/kingpin.v2"
+	"os"
 )
 
 // Configure stores configuration.

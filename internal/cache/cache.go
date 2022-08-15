@@ -3,13 +3,12 @@ package cache
 import (
 	"context"
 	"fmt"
+	"github.com/go-redis/redis/v8"
+	"github.com/sirupsen/logrus"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
-
-	"github.com/go-redis/redis/v8"
-	"github.com/sirupsen/logrus"
 )
 
 type Cache struct {

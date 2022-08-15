@@ -5,12 +5,11 @@ import (
 	"enforce-shared-lb/internal/provider"
 	"enforce-shared-lb/internal/utils"
 	"fmt"
-	"time"
-
 	openapi "github.com/alibabacloud-go/darabonba-openapi/client"
 	slb "github.com/alibabacloud-go/slb-20140515/v3/client"
 	"github.com/alibabacloud-go/tea/tea"
 	"github.com/sirupsen/logrus"
+	"time"
 )
 
 type aliCloud struct {

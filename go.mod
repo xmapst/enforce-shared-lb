@@ -8,6 +8,7 @@ require (
 	github.com/alibabacloud-go/tea v1.1.17
 	github.com/avast/retry-go/v4 v4.0.5
 	github.com/gin-contrib/cors v1.4.0
+	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-redsync/redsync/v4 v4.5.1

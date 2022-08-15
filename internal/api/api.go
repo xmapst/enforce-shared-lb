@@ -6,15 +6,15 @@ import (
 	"enforce-shared-lb/internal/cache"
 	"enforce-shared-lb/internal/utils"
 	"fmt"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/pprof"
+	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
+	"github.com/sirupsen/logrus"
 	"math"
 	"net/http"
 	"strings"
 	"time"
-
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
-	"github.com/sirupsen/logrus"
 )
 
 var upgrader = websocket.Upgrader{
@@ -46,6 +46,7 @@ func Router() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 	r.Use(cors.Default(), gin.Recovery(), logger())
+	pprof.Register(r)
 	r.Any("/", func(c *gin.Context) {
 		routers := r.Routes()
 		var paths []string

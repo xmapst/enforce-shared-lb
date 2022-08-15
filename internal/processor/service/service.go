@@ -7,15 +7,14 @@ import (
 	"enforce-shared-lb/internal/model"
 	"enforce-shared-lb/internal/provider"
 	"github.com/avast/retry-go/v4"
-	"strconv"
-	"time"
-
 	"github.com/go-redsync/redsync/v4"
 	"github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/kubernetes"
+	"strconv"
+	"time"
 )
 
 type Service struct {

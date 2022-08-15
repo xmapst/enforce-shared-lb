@@ -5,14 +5,13 @@ import (
 	"enforce-shared-lb/internal/provider"
 	"enforce-shared-lb/internal/utils"
 	"fmt"
-	"time"
-
 	"github.com/alibabacloud-go/tea/tea"
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
 	elb "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v2"
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v2/model"
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v2/region"
 	"github.com/sirupsen/logrus"
+	"time"
 )
 
 type huaweiCloud struct {

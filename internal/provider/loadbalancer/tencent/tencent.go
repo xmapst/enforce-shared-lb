@@ -5,13 +5,12 @@ import (
 	"enforce-shared-lb/internal/provider"
 	"enforce-shared-lb/internal/utils"
 	"fmt"
-	"time"
-
 	"github.com/alibabacloud-go/tea/tea"
 	"github.com/sirupsen/logrus"
 	clb "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb/v20180317"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
+	"time"
 )
 
 type tencentCloud struct {

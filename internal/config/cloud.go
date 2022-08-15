@@ -2,13 +2,11 @@ package config
 
 import (
 	"encoding/json"
-	"strings"
-
-	"github.com/sirupsen/logrus"
-
 	aliSlb "github.com/alibabacloud-go/slb-20140515/v3/client"
 	huaweiElb "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v2/model"
+	"github.com/sirupsen/logrus"
 	tencentClb "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb/v20180317"
+	"strings"
 )
 
 func (c *Configure) loadCloudConf() {
