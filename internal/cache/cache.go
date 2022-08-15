@@ -318,21 +318,6 @@ func (c *Cache) Clean(project, name string, ports []Port) error {
 		return err
 	}
 
-	// 删除缓存中后端
-	err = c.client.Del(context.Background(), c.backendKey(project, name)).Err()
-	if err != nil && err != redis.Nil {
-		logrus.Error(err)
-		return err
-	}
-
-	// 清理端口使用
-	for _, v := range ports {
-		err = c.client.SRem(context.Background(), c.loadBalancerKey(project, id, v.Protocol), v.Port).Err()
-		if err != nil && err != redis.Nil {
-			logrus.Warning(err)
-		}
-	}
-
 	// 增加load balancer分数
 	if id != "" {
 		var increment = float64(int64(len(ports)))
@@ -343,8 +328,37 @@ func (c *Cache) Clean(project, name string, ports []Port) error {
 		}
 	}
 
+	c.cleanPorts(project, id, ports)
+	err = c.cleanBackend(project, name)
+	if err != nil {
+		return err
+	}
+	return c.cleanBackendSet(project, name)
+}
+
+func (c *Cache) cleanPorts(project, id string, ports []Port) {
+	// 清理端口使用
+	for _, v := range ports {
+		err := c.client.SRem(context.Background(), c.loadBalancerKey(project, id, v.Protocol), v.Port).Err()
+		if err != nil && err != redis.Nil {
+			logrus.Warning(err)
+		}
+	}
+}
+
+func (c *Cache) cleanBackend(project, name string) error {
+	// 删除缓存中后端
+	err := c.client.Del(context.Background(), c.backendKey(project, name)).Err()
+	if err != nil && err != redis.Nil {
+		logrus.Error(err)
+		return err
+	}
+	return nil
+}
+
+func (c *Cache) cleanBackendSet(project, name string) error {
 	// 清理后端集合中成员
-	err = c.client.HDel(context.Background(), c.backendKey(project), name).Err()
+	err := c.client.HDel(context.Background(), c.backendKey(project), name).Err()
 	if err != nil && err != redis.Nil {
 		logrus.Error(err)
 		return err

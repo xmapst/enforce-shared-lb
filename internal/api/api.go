@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"enforce-shared-lb/internal/cache"
+	"enforce-shared-lb/internal/config"
 	"enforce-shared-lb/internal/utils"
 	"fmt"
 	"github.com/gin-contrib/cors"
@@ -46,7 +47,9 @@ func Router() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 	r.Use(cors.Default(), gin.Recovery(), logger())
-	pprof.Register(r)
+	if config.Conf.Debug {
+		pprof.Register(r)
+	}
 	r.Any("/", func(c *gin.Context) {
 		routers := r.Routes()
 		var paths []string
