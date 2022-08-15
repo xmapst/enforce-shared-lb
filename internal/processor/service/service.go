@@ -138,7 +138,7 @@ func (s *Service) Process(obj model.Event) error {
 		}
 
 		// 获取已经使用的端口
-		var cachePorts []cache.Port
+		var cachePorts []*cache.Port
 		cachePorts, err = cache.DB.GetLoadBalancerUsingPorts(service.Namespace, id, protocol)
 		if err != nil {
 			log.Error(err)
@@ -241,9 +241,9 @@ func (s *Service) checkExist(service *corev1.Service, enTargetPort bool) bool {
 	return false
 }
 
-func (s *Service) translatePort(servicePort []corev1.ServicePort) (result []cache.Port) {
+func (s *Service) translatePort(servicePort []corev1.ServicePort) (result []*cache.Port) {
 	for _, port := range servicePort {
-		result = append(result, cache.Port{
+		result = append(result, &cache.Port{
 			Name:       port.Name,
 			Protocol:   string(port.Protocol),
 			Port:       port.Port,
@@ -253,7 +253,7 @@ func (s *Service) translatePort(servicePort []corev1.ServicePort) (result []cach
 	return result
 }
 
-func (s *Service) translateServicePort(servicePort []corev1.ServicePort, ports []cache.Port, targetPort bool) (result []corev1.ServicePort) {
+func (s *Service) translateServicePort(servicePort []corev1.ServicePort, ports []*cache.Port, targetPort bool) (result []corev1.ServicePort) {
 	for _, port := range servicePort {
 		for _, p := range ports {
 			if port.Name == p.Name {

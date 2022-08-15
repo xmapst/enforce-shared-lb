@@ -2,6 +2,7 @@ package fake
 
 import (
 	"enforce-shared-lb/internal/provider"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -16,7 +17,10 @@ func (f *fake) CreateClient() error {
 	return nil
 }
 
-func (f *fake) Create() (string, error) { return uuid.New().String(), nil }
+func (f *fake) Create() (string, error) {
+	time.Sleep(10 * time.Second)
+	return uuid.New().String(), nil
+}
 
 func (f *fake) Delete(id string) error { return nil }
 

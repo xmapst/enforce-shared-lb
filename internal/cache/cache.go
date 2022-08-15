@@ -245,7 +245,7 @@ func (c *Cache) SetLoadBalancerUsingPorts(project, id, protocol string, ports []
 	return c.client.SAdd(context.Background(), key, members...).Err()
 }
 
-func (c *Cache) GetLoadBalancerUsingPorts(project, id, protocol string) ([]Port, error) {
+func (c *Cache) GetLoadBalancerUsingPorts(project, id, protocol string) ([]*Port, error) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	var key = c.loadBalancerKey(project, id, protocol)
@@ -254,17 +254,17 @@ func (c *Cache) GetLoadBalancerUsingPorts(project, id, protocol string) ([]Port,
 	if err != nil {
 		return nil, err
 	}
-	var ports []Port
+	var ports []*Port
 	for _, v := range res {
 		p, _ := strconv.ParseInt(v, 10, 64)
-		ports = append(ports, Port{
+		ports = append(ports, &Port{
 			Port: int32(p),
 		})
 	}
 	return ports, nil
 }
 
-func (c *Cache) GetBackendPorts(project, name string) (loadBalancerID string, res []Port) {
+func (c *Cache) GetBackendPorts(project, name string) (loadBalancerID string, res []*Port) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	var key = c.backendKey(project)
@@ -290,7 +290,7 @@ func (c *Cache) GetBackendPorts(project, name string) (loadBalancerID string, re
 			_ = c.client.HDel(context.Background(), key, v).Err()
 			continue
 		}
-		res = append(res, *port)
+		res = append(res, port)
 	}
 	return
 }
