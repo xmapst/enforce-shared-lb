@@ -17,7 +17,7 @@ func (f *fake) CreateClient() error {
 }
 
 func (f *fake) Create() (string, error) {
-	time.Sleep(10 * time.Second)
+	time.Sleep(1 * time.Second)
 	return uuid.New().String(), nil
 }
 

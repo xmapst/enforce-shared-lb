@@ -167,6 +167,7 @@ func (c *Cache) DetailBackend(project, name string) (interface{}, error) {
 		port, err := c.splitBackendPort(v)
 		if err != nil {
 			_ = c.client.SRem(context.Background(), key, v).Err()
+			continue
 		}
 		data = append(data, *port)
 	}
@@ -298,13 +299,15 @@ func (c *Cache) SetBackend(project, name string, ports []Port) error {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	var key = c.backendKey(project, name)
+	var members []interface{}
 	for _, p := range ports {
 		member := fmt.Sprintf("%s#%d#%s#%d", p.Name, p.Port, p.Protocol, p.TargetPort)
-		err := c.client.SAdd(context.Background(), key, member).Err()
-		if err != nil && err != redis.Nil {
-			logrus.Error(err)
-			return err
-		}
+		members = append(members, member)
+	}
+	err := c.client.SAdd(context.Background(), key, members...).Err()
+	if err != nil && err != redis.Nil {
+		logrus.Error(err)
+		return err
 	}
 	return nil
 }
@@ -338,12 +341,18 @@ func (c *Cache) Clean(project, name string, ports []Port) error {
 
 func (c *Cache) cleanPorts(project, id string, ports []Port) {
 	// 清理端口使用
+	var wg = new(sync.WaitGroup)
 	for _, v := range ports {
-		err := c.client.SRem(context.Background(), c.loadBalancerKey(project, id, v.Protocol), v.Port).Err()
-		if err != nil && err != redis.Nil {
-			logrus.Warning(err)
-		}
+		wg.Add(1)
+		go func(v Port) {
+			defer wg.Done()
+			err := c.client.SRem(context.Background(), c.loadBalancerKey(project, id, v.Protocol), v.Port).Err()
+			if err != nil && err != redis.Nil {
+				logrus.Warning(err)
+			}
+		}(v)
 	}
+	wg.Wait()
 }
 
 func (c *Cache) cleanBackend(project, name string) error {
