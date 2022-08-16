@@ -1,7 +1,8 @@
 package config
 
 import (
-	"encoding/json"
+	"enforce-shared-lb/internal/utils"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"os"
@@ -22,12 +23,12 @@ type Configure struct {
 }
 
 type Cloud struct {
-	Name            string          `json:"name" default:"alibaba"`
-	Max             int64           `json:"max" default:"51"`
-	Endpoint        *string         `json:"endpoint" default:""`
-	AccessKeyId     *string         `json:"access_key_id" default:""`
-	AccessKeySecret *string         `json:"access_key_secret" default:""`
-	Config          json.RawMessage `json:"config"`
+	Name            string              `json:"name" default:"alibaba"`
+	Max             int64               `json:"max" default:"51"`
+	Endpoint        *string             `json:"endpoint" default:""`
+	AccessKeyId     *string             `json:"access_key_id" default:""`
+	AccessKeySecret *string             `json:"access_key_secret" default:""`
+	Config          jsoniter.RawMessage `json:"config"`
 }
 
 var (
@@ -49,7 +50,7 @@ func Init() {
 	if err != nil {
 		logrus.Fatalln(err)
 	}
-	err = json.Unmarshal(file, Conf)
+	err = utils.Json.Unmarshal(file, Conf)
 	if err != nil {
 		logrus.Fatalln(err)
 	}

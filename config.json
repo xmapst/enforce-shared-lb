@@ -3,11 +3,11 @@
   "addr": "0.0.0.0",
   "port": 8080,
   "channel_size": 409600,
-  "redis": "redis://:123456@localhost:6379/0?pool_size=512&read_timeout=30s&write_timeout=30s",
+  "redis": "redis://:123456@localhost:6379/0?pool_size=512&read_timeout=30s&write_timeout=30s&min_idle_conns=15",
   "key_prefix": "enforce_shared_lb",
   "labels": {
     "lb_address_type":"internet",
-    "shared_lb":"shared-service"
+    "q1autoops_type":"game-service"
   },
   "cloud": {
     "name": "fake",

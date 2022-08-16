@@ -2,7 +2,6 @@ package api
 
 import (
 	"bytes"
-	"encoding/json"
 	"enforce-shared-lb/internal/cache"
 	"enforce-shared-lb/internal/config"
 	"enforce-shared-lb/internal/utils"
@@ -150,7 +149,7 @@ func response(c *gin.Context, fn func() (interface{}, error)) {
 			logrus.Error(err)
 			continue
 		}
-		if err = json.NewEncoder(buf).Encode(res); err != nil {
+		if err = utils.Json.NewEncoder(buf).Encode(res); err != nil {
 			logrus.Error(err)
 			return
 		}

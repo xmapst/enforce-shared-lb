@@ -1,7 +1,7 @@
 package config
 
 import (
-	"encoding/json"
+	"enforce-shared-lb/internal/utils"
 	aliSlb "github.com/alibabacloud-go/slb-20140515/v3/client"
 	huaweiElb "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v2/model"
 	"github.com/sirupsen/logrus"
@@ -25,7 +25,7 @@ func (c *Configure) loadCloudConf() {
 	if !ok {
 		logrus.Fatalf("%s Cloud Merchant is not supported yet", c.Cloud.Name)
 	}
-	err := json.Unmarshal(c.Cloud.Config, c.CloudConf)
+	err := utils.Json.Unmarshal(c.Cloud.Config, c.CloudConf)
 	if err != nil {
 		logrus.Fatalln(err)
 	}

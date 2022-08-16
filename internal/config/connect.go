@@ -3,9 +3,6 @@ package config
 import (
 	"context"
 	"github.com/go-redis/redis/v8"
-	"github.com/go-redsync/redsync/v4"
-	"github.com/go-redsync/redsync/v4/redis/goredis/v8"
-	"io/ioutil"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -15,7 +12,6 @@ import (
 
 var (
 	RedisCli   *redis.Client
-	GLock      *redsync.Redsync
 	KubeClient *kubernetes.Clientset
 )
 
@@ -31,9 +27,6 @@ func (c *Configure) newRedisClient() error {
 	if err != nil {
 		return err
 	}
-
-	pool := goredis.NewPool(RedisCli)
-	GLock = redsync.New(pool)
 	return nil
 }
 
@@ -48,7 +41,7 @@ func (c *Configure) newKubeClient() error {
 			kubeConfPath = filepath.Join(os.Getenv("HOME"), ".kube", "config")
 		}
 		var f []byte
-		f, err = ioutil.ReadFile(kubeConfPath)
+		f, err = os.ReadFile(kubeConfPath)
 		if err != nil {
 			return err
 		}

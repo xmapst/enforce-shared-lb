@@ -7,7 +7,6 @@ import (
 	"enforce-shared-lb/internal/model"
 	"enforce-shared-lb/internal/provider"
 	"github.com/avast/retry-go/v4"
-	"github.com/go-redsync/redsync/v4"
 	"github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -21,14 +20,12 @@ type Service struct {
 	LB     provider.LoadBalancerInterface
 	conf   *config.Configure
 	client *kubernetes.Clientset
-	GLock  map[string]*redsync.Mutex
 }
 
 func New() *Service {
 	s := &Service{
 		conf:   config.Conf,
 		client: config.KubeClient,
-		GLock:  map[string]*redsync.Mutex{},
 	}
 	return s
 }
@@ -79,23 +76,6 @@ func (s *Service) Process(obj model.Event) error {
 			service.Spec.Ports[k].Name = strconv.Itoa(int(v.Port))
 		}
 	}
-
-	// 加锁处理
-	// die waiting for lock
-	for {
-		err := s.GLock[service.Namespace].Lock()
-		if err == nil {
-			break
-		}
-		time.Sleep(100 * time.Millisecond)
-	}
-	// unlock
-	defer func(lock *redsync.Mutex) {
-		_, err := lock.Unlock()
-		if err != nil {
-			log.Warning(err)
-		}
-	}(s.GLock[service.Namespace])
 
 	switch obj.EventType {
 	case model.EventTypeAdded, model.EventTypeModified:

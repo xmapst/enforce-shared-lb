@@ -7,7 +7,6 @@ import (
 	"enforce-shared-lb/internal/processor/service"
 	"enforce-shared-lb/internal/provider"
 	"enforce-shared-lb/internal/provider/loadbalancer"
-	"fmt"
 	"github.com/sirupsen/logrus"
 )
 
@@ -35,9 +34,6 @@ func Consumer(context context.Context, objCh chan model.Event) error {
 			case <-context.Done():
 				return
 			case obj := <-objCh:
-				if _, ok := c.service.GLock[obj.Project]; !ok {
-					c.service.GLock[obj.Project] = config.GLock.NewMutex(fmt.Sprintf("%s:%s:lock", c.conf.KeyPrefix, obj.Project))
-				}
 				c.event(objCh, obj)
 			}
 		}

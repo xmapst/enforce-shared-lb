@@ -11,10 +11,10 @@ require (
 	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-redis/redis/v8 v8.11.5
-	github.com/go-redsync/redsync/v4 v4.5.1
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/websocket v1.4.2
 	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.0.98
+	github.com/json-iterator/go v1.1.12
 	github.com/sirupsen/logrus v1.8.1
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.444
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.444
@@ -51,12 +51,10 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/gnostic v0.5.7-v3refs // indirect
+	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
-	github.com/hashicorp/errwrap v1.0.0 // indirect
-	github.com/hashicorp/go-multierror v1.1.0 // indirect
 	github.com/imdario/mergo v0.3.5 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
