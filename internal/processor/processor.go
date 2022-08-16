@@ -17,7 +17,7 @@ type consumer struct {
 	lb      provider.LoadBalancerInterface
 }
 
-func Consumer(context context.Context, objCh chan model.Event) error {
+func Consumer(ctx context.Context, objCh chan model.Event) error {
 	lb, err := loadbalancer.New()
 	if err != nil {
 		logrus.Error(err)
@@ -34,7 +34,8 @@ func Consumer(context context.Context, objCh chan model.Event) error {
 	go func() {
 		for {
 			select {
-			case <-context.Done():
+			case <-ctx.Done():
+				logrus.Infoln("stop Consumer")
 				return
 			case obj := <-objCh:
 				c.event(objCh, obj)

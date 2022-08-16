@@ -78,6 +78,7 @@ func main() {
 	if err != nil && err != http.ErrServerClosed {
 		logrus.Error(err)
 	}
+	select {}
 }
 
 func registerSignalHandlers() {
