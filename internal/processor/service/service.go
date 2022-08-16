@@ -109,7 +109,7 @@ func (s *Service) Process(obj model.Event) error {
 
 		// 获取新的LoadBalancer
 		if id == "" {
-			id, err = s.getNewLoadBalancer(service.Namespace)
+			id, err = s.newLoadBalancer(service.Namespace)
 			if err != nil {
 				log.Error(err)
 				return err
@@ -176,18 +176,13 @@ func (s *Service) Process(obj model.Event) error {
 	return nil
 }
 
-func (s *Service) getNewLoadBalancer(project string) (string, error) {
+func (s *Service) newLoadBalancer(project string) (string, error) {
 	id, err := s.LB.Create()
 	if err != nil {
 		return "", err
 	}
-	// 修改可用数量
+	// 设置可用数量
 	err = cache.DB.SetLoadBalancerAmount(project, id, 0)
-	if err != nil {
-		return "", err
-	}
-	// 添加到到已使用集合中
-	err = cache.DB.SetLoadBalancerUsingPorts(project, id, "UNKNOWN", nil)
 	if err != nil {
 		return "", err
 	}
@@ -196,6 +191,7 @@ func (s *Service) getNewLoadBalancer(project string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	logrus.Infoln("create new loadBalancer", id)
 	return id, nil
 }
 

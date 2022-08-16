@@ -16,6 +16,7 @@ type Cache struct {
 	lock             *sync.Mutex
 	keyPrefix        string
 	maxNumOfBackends int64
+	ctx              context.Context
 }
 
 var DB *Cache
@@ -26,8 +27,8 @@ func New(client *redis.Client, keyPrefix string, maxNumOfBackends int64) {
 		keyPrefix:        keyPrefix,
 		maxNumOfBackends: maxNumOfBackends - 1,
 		lock:             new(sync.Mutex),
+		ctx:              context.Background(),
 	}
-	go DB.autoClean(30)
 }
 
 /*
@@ -58,27 +59,27 @@ func (c *Cache) ListProject() (interface{}, error) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	var key = fmt.Sprintf("%s:project", c.keyPrefix)
-	return c.client.SMembers(context.Background(), key).Result()
+	return c.client.SMembers(c.ctx, key).Result()
 }
 
 func (c *Cache) AddProject(project string) error {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	var key = fmt.Sprintf("%s:project", c.keyPrefix)
-	return c.client.SAdd(context.Background(), key, project).Err()
+	return c.client.SAdd(c.ctx, key, project).Err()
 }
 
 func (c *Cache) ListLoadBalancerAmount(project string) (interface{}, error) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	var key = c.loadBalancerKey(project, "amount")
-	members, err := c.client.ZRange(context.Background(), key, 0, -1).Result()
+	members, err := c.client.ZRange(c.ctx, key, 0, -1).Result()
 	if err != nil {
 		return nil, err
 	}
 	var data = make(map[string]float64)
 	for _, v := range members {
-		data[v] = c.client.ZScore(context.Background(), key, v).Val()
+		data[v] = c.client.ZScore(c.ctx, key, v).Val()
 	}
 	return data, nil
 
@@ -88,7 +89,7 @@ func (c *Cache) DeleteLoadBalancer(project, id string) error {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	var key = c.loadBalancerKey(project)
-	return c.client.ZRem(context.Background(), key, id).Err()
+	return c.client.ZRem(c.ctx, key, id).Err()
 }
 
 func (c *Cache) ListLoadBalancer(project, id string) (interface{}, error) {
@@ -100,7 +101,7 @@ func (c *Cache) ListLoadBalancer(project, id string) (interface{}, error) {
 	for {
 		var keys []string
 		var err error
-		keys, cursor, err = c.client.Scan(context.Background(), cursor, key, 1000).Result()
+		keys, cursor, err = c.client.Scan(c.ctx, cursor, key, 1000).Result()
 		if err != nil {
 			logrus.Error(err)
 			continue
@@ -121,21 +122,21 @@ func (c *Cache) DetailLoadBalancer(project, id, protocol string) (interface{}, e
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	var key = c.loadBalancerKey(project, id, protocol)
-	return c.client.SMembers(context.Background(), key).Result()
+	return c.client.SMembers(c.ctx, key).Result()
 }
 
 func (c *Cache) AddBackend(project, name, id string) error {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	var key = c.backendKey(project)
-	return c.client.HSet(context.Background(), key, name, id).Err()
+	return c.client.HSet(c.ctx, key, name, id).Err()
 }
 
 func (c *Cache) ListBackend(project string) (interface{}, error) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	var key = c.backendKey(project)
-	res, err := c.client.HGetAll(context.Background(), key).Result()
+	res, err := c.client.HGetAll(c.ctx, key).Result()
 	if err != nil {
 		return nil, err
 	}
@@ -158,7 +159,7 @@ func (c *Cache) DetailBackend(project, name string) (interface{}, error) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	var key = c.backendKey(project, name)
-	members, err := c.client.SMembers(context.Background(), key).Result()
+	members, err := c.client.SMembers(c.ctx, key).Result()
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +167,7 @@ func (c *Cache) DetailBackend(project, name string) (interface{}, error) {
 	for _, v := range members {
 		port, err := c.splitBackendPort(v)
 		if err != nil {
-			_ = c.client.SRem(context.Background(), key, v).Err()
+			_ = c.client.SRem(c.ctx, key, v).Err()
 			continue
 		}
 		data = append(data, *port)
@@ -204,7 +205,7 @@ func (c *Cache) GetAvailableLoadBalancer(project string, num int64) (string, err
 		Min: fmt.Sprintf("%d", num),
 		Max: fmt.Sprintf("%d", c.maxNumOfBackends),
 	}
-	res, err := c.client.ZRangeByScore(context.Background(), key, op).Result()
+	res, err := c.client.ZRangeByScore(c.ctx, key, op).Result()
 	if err != nil {
 		return "", err
 	}
@@ -221,12 +222,12 @@ func (c *Cache) SetLoadBalancerAmount(project, id string, increment int64) error
 	key := c.loadBalancerKey(project, "amount")
 	if increment == 0 {
 		// 设置初始分数
-		return c.client.ZAdd(context.Background(), key, &redis.Z{
+		return c.client.ZAdd(c.ctx, key, &redis.Z{
 			Member: id,
 			Score:  float64(c.maxNumOfBackends),
 		}).Err()
 	}
-	return c.client.ZIncrBy(context.Background(), key, float64(increment), id).Err()
+	return c.client.ZIncrBy(c.ctx, key, float64(increment), id).Err()
 }
 
 func (c *Cache) SetLoadBalancerUsingPorts(project, id, protocol string, ports []Port) error {
@@ -242,7 +243,7 @@ func (c *Cache) SetLoadBalancerUsingPorts(project, id, protocol string, ports []
 		}
 	}
 	// 添加成员
-	return c.client.SAdd(context.Background(), key, members...).Err()
+	return c.client.SAdd(c.ctx, key, members...).Err()
 }
 
 func (c *Cache) GetLoadBalancerUsingPorts(project, id, protocol string) ([]*Port, error) {
@@ -250,7 +251,7 @@ func (c *Cache) GetLoadBalancerUsingPorts(project, id, protocol string) ([]*Port
 	defer c.lock.Unlock()
 	var key = c.loadBalancerKey(project, id, protocol)
 	// 获取所有成员
-	res, err := c.client.SMembers(context.Background(), key).Result()
+	res, err := c.client.SMembers(c.ctx, key).Result()
 	if err != nil {
 		return nil, err
 	}
@@ -269,7 +270,7 @@ func (c *Cache) GetBackendPorts(project, name string) (loadBalancerID string, re
 	defer c.lock.Unlock()
 	var key = c.backendKey(project)
 	var err error
-	loadBalancerID, err = c.client.HGet(context.Background(), key, name).Result()
+	loadBalancerID, err = c.client.HGet(c.ctx, key, name).Result()
 	if err != nil {
 		if err != redis.Nil {
 			logrus.Error(err)
@@ -277,7 +278,7 @@ func (c *Cache) GetBackendPorts(project, name string) (loadBalancerID string, re
 		return "", nil
 	}
 	key = c.backendKey(project, name)
-	members, err := c.client.SMembers(context.Background(), key).Result()
+	members, err := c.client.SMembers(c.ctx, key).Result()
 	if err != nil {
 		if err != redis.Nil {
 			logrus.Error(err)
@@ -287,7 +288,7 @@ func (c *Cache) GetBackendPorts(project, name string) (loadBalancerID string, re
 	for _, v := range members {
 		port, err := c.splitBackendPort(v)
 		if err != nil {
-			_ = c.client.HDel(context.Background(), key, v).Err()
+			_ = c.client.HDel(c.ctx, key, v).Err()
 			continue
 		}
 		res = append(res, port)
@@ -304,7 +305,7 @@ func (c *Cache) SetBackend(project, name string, ports []Port) error {
 		member := fmt.Sprintf("%s#%d#%s#%d", p.Name, p.Port, p.Protocol, p.TargetPort)
 		members = append(members, member)
 	}
-	err := c.client.SAdd(context.Background(), key, members...).Err()
+	err := c.client.SAdd(c.ctx, key, members...).Err()
 	if err != nil && err != redis.Nil {
 		logrus.Error(err)
 		return err
@@ -315,7 +316,7 @@ func (c *Cache) SetBackend(project, name string, ports []Port) error {
 func (c *Cache) Clean(project, name string, ports []Port) error {
 	c.lock.Lock()
 	defer c.lock.Unlock()
-	id, err := c.client.HGet(context.Background(), c.backendKey(project), name).Result()
+	id, err := c.client.HGet(c.ctx, c.backendKey(project), name).Result()
 	if err != nil && err != redis.Nil {
 		logrus.Error(err)
 		return err
@@ -324,7 +325,7 @@ func (c *Cache) Clean(project, name string, ports []Port) error {
 	// 增加load balancer分数
 	if id != "" {
 		var increment = float64(int64(len(ports)))
-		err = c.client.ZIncrBy(context.Background(), c.loadBalancerKey(project, "amount"), increment, id).Err()
+		err = c.client.ZIncrBy(c.ctx, c.loadBalancerKey(project, "amount"), increment, id).Err()
 		if err != nil && err != redis.Nil {
 			logrus.Error(err)
 			return err
@@ -346,7 +347,7 @@ func (c *Cache) cleanPorts(project, id string, ports []Port) {
 		wg.Add(1)
 		go func(v Port) {
 			defer wg.Done()
-			err := c.client.SRem(context.Background(), c.loadBalancerKey(project, id, v.Protocol), v.Port).Err()
+			err := c.client.SRem(c.ctx, c.loadBalancerKey(project, id, v.Protocol), v.Port).Err()
 			if err != nil && err != redis.Nil {
 				logrus.Warning(err)
 			}
@@ -357,7 +358,7 @@ func (c *Cache) cleanPorts(project, id string, ports []Port) {
 
 func (c *Cache) cleanBackend(project, name string) error {
 	// 删除缓存中后端
-	err := c.client.Del(context.Background(), c.backendKey(project, name)).Err()
+	err := c.client.Del(c.ctx, c.backendKey(project, name)).Err()
 	if err != nil && err != redis.Nil {
 		logrus.Error(err)
 		return err
@@ -367,7 +368,7 @@ func (c *Cache) cleanBackend(project, name string) error {
 
 func (c *Cache) cleanBackendSet(project, name string) error {
 	// 清理后端集合中成员
-	err := c.client.HDel(context.Background(), c.backendKey(project), name).Err()
+	err := c.client.HDel(c.ctx, c.backendKey(project), name).Err()
 	if err != nil && err != redis.Nil {
 		logrus.Error(err)
 		return err
@@ -390,50 +391,72 @@ func (c *Cache) generateKey(project, style string, key ...string) string {
 	return fmt.Sprintf("%s:%s:%s:%s", c.keyPrefix, project, style, strings.Join(key, ":"))
 }
 
-func (c *Cache) autoClean(interval int) {
-	ticker := time.Tick(time.Duration(interval) * time.Second)
-	for range ticker {
-		c.cleanProject()
-	}
+func (c *Cache) Recycle(interval time.Duration, ch chan<- string) {
+	go func() {
+		ticker := time.Tick(interval * time.Second)
+		for range ticker {
+			go func() {
+				c.lock.Lock()
+				defer c.lock.Unlock()
+				var key = fmt.Sprintf("%s:project", c.keyPrefix)
+				members, err := c.client.SMembers(c.ctx, key).Result()
+				if err != nil {
+					logrus.Warning(err)
+					return
+				}
+				var wg = new(sync.WaitGroup)
+				for _, member := range members {
+					wg.Add(1)
+					go c.cleanBackendLoadBalancer(wg, member, ch)
+				}
+				wg.Wait()
+			}()
+		}
+	}()
 }
 
-func (c *Cache) cleanProject() {
-	c.lock.Lock()
-	defer c.lock.Unlock()
-	var key = fmt.Sprintf("%s:project", c.keyPrefix)
-	members, err := c.client.SMembers(context.Background(), key).Result()
-	if err != nil {
-		logrus.Warning(err)
-		return
-	}
-	for _, member := range members {
-		res := c.client.Exists(context.Background(), fmt.Sprintf("%s:%s:loadbalancer:amount", c.keyPrefix, member)).Val()
-		if res == 1 {
-			c.cleanBackendLoadBalancer(member)
-			continue
-		}
-		err = c.client.SRem(context.Background(), key, member).Err()
-		if err != nil {
-			logrus.Warning(err)
-		}
-	}
-}
-
-func (c *Cache) cleanBackendLoadBalancer(project string) {
-	//enforce_shared_lb:default:backend
+func (c *Cache) cleanBackendLoadBalancer(wg *sync.WaitGroup, project string, ch chan<- string) {
+	defer wg.Done()
 	var key = c.backendKey(project)
-	members, err := c.client.HGetAll(context.Background(), key).Result()
-	if err != nil {
+	members, err := c.client.HGetAll(c.ctx, key).Result()
+	if err != nil && err != redis.Nil {
 		logrus.Warning(err)
 		return
 	}
 	for _, member := range members {
-		err = c.client.ZScore(context.Background(), c.loadBalancerKey(project, "amount"), member).Err()
-		if err == redis.Nil {
-			err = c.client.HDel(context.Background(), key, member).Err()
+		wg.Add(1)
+		go func(member string) {
+			defer wg.Done()
+			// check
+			var cursor uint64
+			var data []string
+			for {
+				var err error
+				var keys []string
+				keys, cursor, err = c.client.Scan(c.ctx, cursor, c.loadBalancerKey(project, member, "*"), 1000).Result()
+				if err != nil {
+					logrus.Error(err)
+					continue
+				}
+				data = append(data, keys...)
+				if cursor == 0 {
+					break
+				}
+			}
+			if len(data) != 0 {
+				return
+			}
+			// 清理分数
+			err = c.client.ZRem(c.ctx, c.loadBalancerKey(project, "amount"), member).Err()
 			if err != nil && err != redis.Nil {
 				logrus.Warning(err)
 			}
-		}
+			// 清理后端列表
+			err = c.client.HDel(c.ctx, key, member).Err()
+			if err != nil && err != redis.Nil {
+				logrus.Warning(err)
+			}
+			ch <- member
+		}(member)
 	}
 }

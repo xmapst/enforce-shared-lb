@@ -2,6 +2,7 @@ package processor
 
 import (
 	"context"
+	"enforce-shared-lb/internal/cache"
 	"enforce-shared-lb/internal/config"
 	"enforce-shared-lb/internal/model"
 	"enforce-shared-lb/internal/processor/service"
@@ -28,6 +29,8 @@ func Consumer(context context.Context, objCh chan model.Event) error {
 		lb:      lb,
 	}
 	c.service.LB = lb
+	ch := make(chan string, c.conf.ChannelSize)
+	cache.DB.Recycle(300, ch)
 	go func() {
 		for {
 			select {
@@ -35,6 +38,12 @@ func Consumer(context context.Context, objCh chan model.Event) error {
 				return
 			case obj := <-objCh:
 				c.event(objCh, obj)
+			case id := <-ch:
+				logrus.Infoln("clean idle loadBalancer", id)
+				err = c.service.LB.Delete(id)
+				if err != nil {
+					logrus.Error(err)
+				}
 			}
 		}
 	}()
