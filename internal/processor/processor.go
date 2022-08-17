@@ -29,8 +29,7 @@ func Consumer(ctx context.Context, objCh chan model.Event) error {
 		lb:      lb,
 	}
 	c.service.LB = lb
-	ch := make(chan string, c.conf.ChannelSize)
-	cache.DB.Recycle(300, ch)
+
 	go func() {
 		for {
 			select {
@@ -39,15 +38,22 @@ func Consumer(ctx context.Context, objCh chan model.Event) error {
 				return
 			case obj := <-objCh:
 				c.event(objCh, obj)
-			case id := <-ch:
+			}
+		}
+	}()
+	if c.conf.AutoClean {
+		ch := make(chan string, c.conf.ChannelSize)
+		cache.DB.Recycle(300, ch)
+		go func() {
+			for id := range ch {
 				logrus.Infoln("clean idle loadBalancer", id)
 				err = c.service.LB.Delete(id)
 				if err != nil {
 					logrus.Error(err)
 				}
 			}
-		}
-	}()
+		}()
+	}
 	return nil
 }
 

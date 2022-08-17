@@ -15,7 +15,7 @@ TODO: 文档的完善, docker image制作及部署脚本
   "addr": "0.0.0.0",
   "port": 8080,
   "channel_size": 1024,
-  "redis": "redis://:123456@localhost:6379/0",
+  "redis": "redis://:123456@localhost:6379/0?pool_size=512&read_timeout=30s&write_timeout=30s&min_idle_conns=15",
   "key_prefix": "enforce_shared_lb",
   "labels": {
     "lb_address_type":"internet",

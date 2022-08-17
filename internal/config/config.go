@@ -13,6 +13,7 @@ type Configure struct {
 	Debug       bool              `json:"debug" default:"false"`
 	Addr        string            `json:"addr" default:"0.0.0.0"`
 	Port        int64             `json:"port" default:"8080"`
+	AutoClean   bool              `json:"auto_clean" default:"false"`
 	ChannelSize int               `json:"channel_size" default:"1024"`
 	Redis       string            `json:"redis" default:"redis://:123456@localhost:6379/0"`
 	KeyPrefix   string            `json:"key_prefix" default:"enforce_shared_lb"`
@@ -33,7 +34,6 @@ type Cloud struct {
 
 var (
 	Conf = &Configure{
-		Debug:       false,                              //default false
 		Addr:        "0.0.0.0",                          //default 0.0.0.0
 		Port:        8080,                               // default 8080
 		ChannelSize: 409600,                             //default 409600
