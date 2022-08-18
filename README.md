@@ -6,8 +6,6 @@
 
 [算法](https://gist.github.com/xmapst/7d41516a644acd900bb3096573947e58): 保证同一个负载均衡下端口不冲突, 不同service使用相同的负载均衡器时, 如有端口冲突会自动处理为新的唯一端口
 
-TODO: 文档的完善, docker image制作及部署脚本
-
 ## 配置文件(以阿里云为例)
 
 ```json
@@ -52,6 +50,21 @@ TODO: 文档的完善, docker image制作及部署脚本
     }
   }
 }
+```
+
+## 构建镜像
+
+```shell
+docker build -t enforce-shared-lb:latest .
+# docker push enforce-shared-lb:latest
+```
+
+## 部署
+
+```shell
+kubectl create -f deploy/01-rbac.yml
+kubectl create -f deploy/02-deployment.tml
+kubectl create -f deploy/03-service.yml
 ```
 
 ## 唯一端口处理算法

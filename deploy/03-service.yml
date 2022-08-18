@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    "app": enforce-shared-lb
+  name: enforce-shared-lb
+  namespace: default
+spec:
+  ports:
+    - port: 80
+      name: enforce-shared-lb
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: enforce-shared-lb
+  sessionAffinity: None
+  type: ClusterIP

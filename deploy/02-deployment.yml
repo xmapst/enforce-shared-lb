@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: enforce-shared-lb
+  namespace: default
+  labels:
+    app: enforce-shared-lb
+spec:
+  selector:
+    matchLabels:
+      app: enforce-shared-lb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: enforce-shared-lb
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: enforce-shared-lb
+          image: enforce-shared-lb:latest
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      serviceAccountName: enforce-shared-lb
+      terminationGracePeriodSeconds: 10
