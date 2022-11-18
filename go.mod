@@ -6,7 +6,7 @@ require (
 	github.com/alibabacloud-go/darabonba-openapi v0.2.1
 	github.com/alibabacloud-go/slb-20140515/v3 v3.3.16
 	github.com/alibabacloud-go/tea v1.1.19
-	github.com/avast/retry-go/v4 v4.0.5
+	github.com/avast/retry-go/v4 v4.3.1
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-gonic/gin v1.8.1
