@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/alibabacloud-go/darabonba-openapi v0.2.1
-	github.com/alibabacloud-go/slb-20140515/v3 v3.3.16
+	github.com/alibabacloud-go/slb-20140515/v3 v3.3.17
 	github.com/alibabacloud-go/tea v1.1.19
 	github.com/avast/retry-go/v4 v4.3.1
 	github.com/gin-contrib/cors v1.4.0
@@ -33,11 +33,11 @@ require (
 	github.com/alibabacloud-go/debug v0.0.0-20190504072949-9472017b5c68 // indirect
 	github.com/alibabacloud-go/endpoint-util v1.1.0 // indirect
 	github.com/alibabacloud-go/openapi-util v0.0.11 // indirect
-	github.com/alibabacloud-go/tea-utils v1.4.3 // indirect
+	github.com/alibabacloud-go/tea-utils v1.4.5 // indirect
 	github.com/alibabacloud-go/tea-xml v1.1.2 // indirect
 	github.com/aliyun/credentials-go v1.1.2 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
-	github.com/clbanning/mxj/v2 v2.5.5 // indirect
+	github.com/clbanning/mxj/v2 v2.5.6 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/emicklei/go-restful/v3 v3.8.0 // indirect
