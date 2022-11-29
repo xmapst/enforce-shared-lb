@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/alibabacloud-go/darabonba-openapi v0.2.1
 	github.com/alibabacloud-go/slb-20140515/v3 v3.3.17
-	github.com/alibabacloud-go/tea v1.1.19
+	github.com/alibabacloud-go/tea v1.1.20
 	github.com/avast/retry-go/v4 v4.3.1
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-contrib/pprof v1.4.0
@@ -13,10 +13,10 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/websocket v1.5.0
-	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.11
+	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.12
 	github.com/json-iterator/go v1.1.12
 	github.com/sirupsen/logrus v1.9.0
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.542
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.546
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.546
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 	k8s.io/api v0.25.4
