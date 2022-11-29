@@ -278,8 +278,9 @@ github.com/stretchr/testify v1.8.1 h1:w7B6lhMri9wdJUVmEZPGGhZzrYTPvgJArz7wNPgYKs
 github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.546 h1:1ks4w0g6h1fNw6soTFQ3RHWdSGUMJ5ZW9p4DWJ7djEA=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.546/go.mod h1:76EzAf8BZGHVeGP5n4QwSvVq5JIPopMDuPPJR7lDyAA=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.546 h1:18ZUEkte3A9b5OkF2vAe070HYo3dg0Zonp/rw+GvI8Y=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.546/go.mod h1:7sCQWVkxcsR38nffDW057DRGk8mUjK1Ing/EFOK8s8Y=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.547 h1:vpwvWpVixEIsgpUcsLcJf5jDE1jNPYivG5XEkTfIW8A=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.547/go.mod h1:7sCQWVkxcsR38nffDW057DRGk8mUjK1Ing/EFOK8s8Y=
 github.com/tjfoc/gmsm v1.3.2 h1:7JVkAn5bvUJ7HtU08iW6UiD+UTmJTIToHCfeFzkcCxM=
 github.com/tjfoc/gmsm v1.3.2/go.mod h1:HaUcFuY0auTiaHB9MHFGCPx5IaLhTUd2atbCFBQXn9w=
 github.com/ugorji/go v1.2.7/go.mod h1:nF9osbDWLy6bDVv/Rtoh6QgnvNDpmCalQV5urGCCS6M=
