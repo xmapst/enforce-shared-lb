@@ -16,8 +16,8 @@ require (
 	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.16
 	github.com/json-iterator/go v1.1.12
 	github.com/sirupsen/logrus v1.9.0
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.562
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.562
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.566
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.566
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 	k8s.io/api v0.26.0
 	k8s.io/apimachinery v0.26.0
